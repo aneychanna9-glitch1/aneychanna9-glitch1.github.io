@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FBVideoSave - Facebook Video Downloader</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        fb: {
+                            blue: '#1877F2',
+                            hover: '#166fe5',
+                            bgLight: '#F0F2F5',
+                            cardDark: '#242526',
+                            bgDark: '#18191A',
+                            borderDark: '#393A3B',
+                            textDark: '#E4E6EB',
+                            subDark: '#B0B3B8'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-text {
+            background: linear-gradient(135deg, #1877F2 0%, #00C6FF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .pulse-ring {
+            box-shadow: 0 0 0 0 rgba(24, 119, 242, 0.4);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(24, 119, 242, 0.4); }
+            70% { box-shadow: 0 0 0 12px rgba(24, 119, 242, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(24, 119, 242, 0); }
+        }
+    </style>
+</head>
+<body class="bg-fb-bgLight text-slate-800 dark:bg-fb-bgDark dark:text-fb-textDark transition-colors duration-300 min-h-screen flex flex-col justify-between">
+
+    <header class="sticky top-0 z-50 bg-white/90 dark:bg-fb-cardDark/90 backdrop-blur-md border-b border-slate-200 dark:border-fb-borderDark transition-colors">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center gap-3 cursor-pointer" onclick="resetApp()">
+                    <div class="w-10 h-10 rounded-full bg-fb-blue flex items-center justify-center text-white text-xl font-bold shadow-md shadow-blue-500/20">
+                        <i class="fa-brands font-semibold fa-facebook-f"></i>
+                    </div>
+                    <span class="text-xl font-extrabold tracking-tight">FBVideo<span class="text-fb-blue">Save</span></span>
+                </div>
+
+                <!-- Navigation & Controls -->
+                <div class="flex items-center gap-4">
+                    <a href="#how-it-works" class="hidden md:inline-flex text-sm font-medium hover:text-fb-blue transition-colors">How It Works</a>
+                    <a href="#features" class="hidden md:inline-flex text-sm font-medium hover:text-fb-blue transition-colors">Features</a>
+                    <a href="#faq" class="hidden md:inline-flex text-sm font-medium hover:text-fb-blue transition-colors">FAQ</a>
+                    
+                    <!-- Theme Toggle -->
+                    <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-fb-borderDark text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all cursor-pointer" title="Toggle Theme">
+                        <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <section class="relative pt-12 pb-16 md:pt-20 md:pb-24 px-4 overflow-hidden">
+            <!-- Background Decorative Orbs -->
+            <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-400/10 dark:bg-blue-600/10 rounded-full blur-3xl -z-10 pointer-events-none"></div>
+
+            <div class="max-w-4xl mx-auto text-center">
+                <!-- Badge -->
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 text-fb-blue text-xs font-semibold uppercase tracking-wider mb-6">
+                    <i class="fa-solid fa-bolt"></i> Fast, Free & HD Quality
+                </div>
+
+                <!-- Main Title -->
+                <h1 class="text-3xl sm:text-5xl font-black tracking-tight leading-tight mb-4">
+                    Download <span class="gradient-text">Facebook Videos</span> & Reels Online
+                </h1>
+                <p class="text-slate-600 dark:text-fb-subDark text-base sm:text-lg max-w-2xl mx-auto mb-8">
+                    Easily convert and download Facebook videos, watch clips, reels, and stories in high definition (1080p, 2K, 4K) or MP3 audio for free.
+                </p>
+
+                <!-- Input Card -->
+                <div class="bg-white dark:bg-fb-cardDark p-3 sm:p-4 rounded-2xl shadow-xl border border-slate-200 dark:border-fb-borderDark max-w-3xl mx-auto transition-all">
+                    <form id="downloadForm" onsubmit="handleDownload(event)" class="flex flex-col md:flex-row gap-3">
+                        <div class="relative flex-grow">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                <i class="fa-solid fa-link text-lg"></i>
+                            </div>
+                            <input 
+                                type="url" 
+                                id="videoUrlInput" 
+                                placeholder="Paste Facebook Video Link here... (e.g. https://www.facebook.com/...)" 
+                                required
+                                class="w-full pl-11 pr-24 py-3.5 sm:py-4 rounded-xl bg-slate-50 dark:bg-fb-bgDark border border-slate-200 dark:border-fb-borderDark focus:outline-none focus:ring-2 focus:ring-fb-blue text-sm sm:text-base dark:text-white transition-all"
+                            />
+                            <!-- Clear/Paste Buttons Inside Field -->
+                            <div class="absolute inset-y-0 right-2 flex items-center gap-1">
+                                <button type="button" onclick="pasteFromClipboard()" class="text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 px-2.5 py-1.5 rounded-lg transition-colors font-medium">
+                                    <i class="fa-regular fa-clipboard mr-1"></i> Paste
+                                </button>
+                            </div>
+                        </div>
+                        <button 
+                            type="submit" 
+                            id="submitBtn"
+                            class="bg-fb-blue hover:bg-fb-hover text-white font-semibold px-8 py-3.5 sm:py-4 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25 active:scale-95 cursor-pointer whitespace-nowrap"
+                        >
+                            <i class="fa-solid fa-download"></i>
+                            <span>Download</span>
+                        </button>
+                    </form>
+
+                    <!-- Quick Sample Testing URL Links -->
+                    <div class="mt-4 pt-3 border-t border-slate-100 dark:border-fb-borderDark/60 flex flex-wrap items-center justify-between text-xs text-slate-500 dark:text-fb-subDark gap-2 px-1">
+                        <span class="font-medium"><i class="fa-solid fa-vial text-fb-blue mr-1"></i> Try sample link:</span>
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="fillSample('reel')" class="hover:text-fb-blue underline decoration-dashed">Sample Reel</button>
+                            <span>•</span>
+                            <button onclick="fillSample('watch')" class="hover:text-fb-blue underline decoration-dashed">FB Watch Video</button>
+                            <span>•</span>
+                            <button onclick="fillSample('hd')" class="hover:text-fb-blue underline decoration-dashed">1080p HD Clip</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Toast Notification Container -->
+                <div id="toast" class="hidden fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-sm border border-slate-700 transition-all">
+                    <i id="toastIcon" class="fa-solid fa-circle-check text-green-400"></i>
+                    <span id="toastMsg">Link copied to clipboard!</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="resultSection" class="hidden max-w-4xl mx-auto px-4 mb-16">
+            <!-- Progress / Loading State -->
+            <div id="loadingCard" class="bg-white dark:bg-fb-cardDark p-8 rounded-2xl border border-slate-200 dark:border-fb-borderDark shadow-lg text-center">
+                <div class="w-16 h-16 mx-auto mb-4 relative flex items-center justify-center">
+                    <div class="w-16 h-16 border-4 border-blue-200 dark:border-blue-900 border-t-fb-blue rounded-full animate-spin"></div>
+                    <i class="fa-brands fa-facebook text-fb-blue text-2xl absolute"></i>
+                </div>
+                <h3 class="text-lg font-bold mb-2">Extracting Video Data...</h3>
+                <p class="text-xs sm:text-sm text-slate-500 dark:text-fb-subDark max-w-md mx-auto mb-4">
+                    Please wait while our high-speed server fetches the available formats and resolutions for your video.
+                </p>
+                <div class="w-full bg-slate-100 dark:bg-fb-bgDark rounded-full h-2.5 max-w-md mx-auto overflow-hidden">
+                    <div id="progressBar" class="bg-fb-blue h-2.5 rounded-full transition-all duration-300" style="width: 15%"></div>
+                </div>
+                <span id="progressText" class="text-xs text-slate-400 font-mono mt-2 inline-block">15% - Connecting to Facebook CDN</span>
+            </div>
+
+            <!-- Video Extracted Preview Card -->
+            <div id="previewCard" class="hidden bg-white dark:bg-fb-cardDark rounded-2xl border border-slate-200 dark:border-fb-borderDark shadow-xl overflow-hidden">
+                <div class="p-4 sm:p-6 bg-slate-50/50 dark:bg-fb-bgDark/40 border-b border-slate-200 dark:border-fb-borderDark flex flex-wrap items-center justify-between gap-2">
+                    <span class="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-md bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300">
+                        <i class="fa-solid fa-circle-check"></i> Video Ready for Download
+                    </span>
+                    <button onclick="resetApp()" class="text-xs text-slate-500 hover:text-slate-700 dark:text-fb-subDark dark:hover:text-white flex items-center gap-1 transition-colors">
+                        <i class="fa-solid fa-rotate-left"></i> Convert Another
+                    </button>
+                </div>
+
+                <div class="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+                    <!-- Video Thumbnail Preview -->
+                    <div class="md:col-span-5 relative group rounded-xl overflow-hidden bg-black shadow-md">
+                        <img id="resThumbnail" src="" alt="Video Thumbnail" class="w-full aspect-video object-cover group-hover:scale-105 transition-transform duration-300">
+                        <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div class="w-12 h-12 rounded-full bg-white/90 text-fb-blue flex items-center justify-center text-lg shadow-lg">
+                                <i class="fa-solid fa-play ml-1"></i>
+                            </div>
+                        </div>
+                        <span id="resDuration" class="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-0.5 rounded font-mono font-medium">02:45</span>
+                    </div>
+
+                    <!-- Details & Download Options -->
+                    <div class="md:col-span-7 flex flex-col justify-between h-full">
+                        <div>
+                            <h2 id="resTitle" class="font-bold text-base sm:text-lg text-slate-800 dark:text-fb-textDark line-clamp-2 mb-2">
+                                Sample Facebook Video Title
+                            </h2>
+                            <div class="flex items-center gap-4 text-xs text-slate-500 dark:text-fb-subDark mb-6">
+                                <span><i class="fa-regular fa-user mr-1"></i> <span id="resAuthor">FB Official Page</span></span>
+                                <span><i class="fa-regular fa-eye mr-1"></i> <span id="resViews">124.5K views</span></span>
+                            </div>
+                        </div>
+
+                        <!-- Format Download Table -->
+                        <div class="space-y-2.5">
+                            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Available Formats & Quality</p>
+
+                            <!-- HD Video Option -->
+                            <div class="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-fb-borderDark hover:border-fb-blue/50 dark:hover:border-fb-blue/50 bg-slate-50 dark:bg-fb-bgDark/60 transition-all">
+                                <div class="flex items-center gap-3">
+                                    <span class="px-2 py-1 rounded bg-blue-100 text-fb-blue dark:bg-blue-900/50 dark:text-blue-300 text-xs font-bold">HD</span>
+                                    <div>
+                                        <div class="text-sm font-semibold">MP4 1080p (High Quality)</div>
+                                        <div class="text-xs text-slate-400">~ 42.8 MB</div>
+                                    </div>
+                                </div>
+                                <button onclick="triggerDownload('1080p')" class="bg-fb-blue hover:bg-fb-hover text-white text-xs font-semibold px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
+                                    <i class="fa-solid fa-download"></i> Download
+                                </button>
+                            </div>
+
+                            <!-- SD Video Option -->
+                            <div class="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-fb-borderDark hover:border-fb-blue/50 dark:hover:border-fb-blue/50 bg-slate-50 dark:bg-fb-bgDark/60 transition-all">
+                                <div class="flex items-center gap-3">
+                                    <span class="px-2 py-1 rounded bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300 text-xs font-bold">SD</span>
+                                    <div>
+                                        <div class="text-sm font-semibold">MP4 720p / Standard</div>
+                                        <div class="text-xs text-slate-400">~ 18.2 MB</div>
+                                    </div>
+                                </div>
+                                <button onclick="triggerDownload('720p')" class="bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
+                                    <i class="fa-solid fa-download"></i> Download
+                                </button>
+                            </div>
+
+                            <!-- MP3 Audio Option -->
+                            <div class="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-fb-borderDark hover:border-fb-blue/50 dark:hover:border-fb-blue/50 bg-slate-50 dark:bg-fb-bgDark/60 transition-all">
+                                <div class="flex items-center gap-3">
+                                    <span class="px-2 py-1 rounded bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300 text-xs font-bold">MP3</span>
+                                    <div>
+                                        <div class="text-sm font-semibold">Audio MP3 (320 kbps)</div>
+                                        <div class="text-xs text-slate-400">~ 3.5 MB</div>
+                                    </div>
+                                </div>
+                                <button onclick="triggerDownload('audio')" class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
+                                    <i class="fa-solid fa-music"></i> Extract Audio
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="max-w-6xl mx-auto px-4 py-12">
+            <div class="text-center mb-12">
+                <h2 class="text-2xl sm:text-3xl font-extrabold mb-3">Why Use FBVideoSave?</h2>
+                <p class="text-slate-500 dark:text-fb-subDark text-sm sm:text-base max-w-xl mx-auto">
+                    The simplest, most feature-packed Facebook video downloader on the web.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Feature 1 -->
+                <div class="bg-white dark:bg-fb-cardDark p-6 rounded-2xl border border-slate-200 dark:border-fb-borderDark hover:border-fb-blue/40 transition-all hover:shadow-lg">
+                    <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/40 text-fb-blue flex items-center justify-center text-xl mb-4">
+                        <i class="fa-solid fa-film"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">HD & 4K Quality</h3>
+                    <p class="text-slate-500 dark:text-fb-subDark text-sm">
+                        Download videos in their original full resolution including 720p, 1080p, and 4K quality without compression loss.
+                    </p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="bg-white dark:bg-fb-cardDark p-6 rounded-2xl border border-slate-200 dark:border-fb-borderDark hover:border-fb-blue/40 transition-all hover:shadow-lg">
+                    <div class="w-12 h-12 rounded-xl bg-green-100 dark:bg-green-900/40 text-green-600 flex items-center justify-center text-xl mb-4">
+                        <i class="fa-solid fa-mobile-screen-button"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Cross-Platform Support</h3>
+                    <p class="text-slate-500 dark:text-fb-subDark text-sm">
+                        Works seamlessly across all modern browsers, Android, iOS iPhone/iPad, Windows PC, and Mac without software installation.
+                    </p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="bg-white dark:bg-fb-cardDark p-6 rounded-2xl border border-slate-200 dark:border-fb-borderDark hover:border-fb-blue/40 transition-all hover:shadow-lg">
+                    <div class="w-12 h-12 rounded-xl bg-purple-100 dark:bg-purple-900/40 text-purple-600 flex items-center justify-center text-xl mb-4">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Safe & Unlimited</h3>
+                    <p class="text-slate-500 dark:text-fb-subDark text-sm">
+                        100% free with no hidden fees, registration required, or software installation. Safe and privacy-conscious.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="how-it-works" class="bg-white dark:bg-fb-cardDark border-y border-slate-200 dark:border-fb-borderDark py-12 md:py-16 transition-colors">
+            <div class="max-w-6xl mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-2xl sm:text-3xl font-extrabold mb-3">How to Download Facebook Videos</h2>
+                    <p class="text-slate-500 dark:text-fb-subDark text-sm sm:text-base max-w-lg mx-auto">
+                        Follow these simple 3 steps to save any public Facebook video directly to your device storage.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+                    <!-- Step 1 -->
+                    <div class="flex flex-col items-center text-center">
+                        <div class="w-16 h-16 rounded-2xl bg-fb-blue text-white font-black text-xl flex items-center justify-center shadow-lg shadow-blue-500/20 mb-4">
+                            1
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">Copy Video Link</h3>
+                        <p class="text-slate-500 dark:text-fb-subDark text-sm">
+                            Open Facebook app or website, find the video/reel, click the <strong>"Share"</strong> button and tap <strong>"Copy Link"</strong>.
+                        </p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="flex flex-col items-center text-center">
+                        <div class="w-16 h-16 rounded-2xl bg-fb-blue text-white font-black text-xl flex items-center justify-center shadow-lg shadow-blue-500/20 mb-4">
+                            2
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">Paste Video URL</h3>
+                        <p class="text-slate-500 dark:text-fb-subDark text-sm">
+                            Paste the copied link into the input field at the top of this page and click the blue <strong>"Download"</strong> button.
+                        </p>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="flex flex-col items-center text-center">
+                        <div class="w-16 h-16 rounded-2xl bg-fb-blue text-white font-black text-xl flex items-center justify-center shadow-lg shadow-blue-500/20 mb-4">
+                            3
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">Save to Device</h3>
+                        <p class="text-slate-500 dark:text-fb-subDark text-sm">
+                            Choose your preferred video quality (1080p HD, 720p SD or MP3) and click to save the file.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="faq" class="max-w-4xl mx-auto px-4 py-12 md:py-16">
+            <div class="text-center mb-10">
+                <h2 class="text-2xl sm:text-3xl font-extrabold mb-3">Frequently Asked Questions</h2>
+                <p class="text-slate-500 dark:text-fb-subDark text-sm">
+                    Everything you need to know about downloading Facebook media files.
+                </p>
+            </div>
+
+            <div class="space-y-4">
+                <!-- FAQ Item 1 -->
+                <div class="bg-white dark:bg-fb-cardDark rounded-xl border border-slate-200 dark:border-fb-borderDark overflow-hidden">
+                    <button onclick="toggleFaq(this)" class="w-full p-4 sm:p-5 text-left font-semibold text-sm sm:text-base flex items-center justify-between cursor-pointer">
+                        <span>Can I download videos from private Facebook accounts?</span>
+                        <i class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-200"></i>
+                    </button>
+                    <div class="hidden p-4 sm:p-5 pt-0 text-slate-500 dark:text-fb-subDark text-sm border-t border-slate-100 dark:border-fb-borderDark/50">
+                        Our standard downloader supports public Facebook videos, Watch videos, and Facebook Reels. For private Facebook videos, ensure you have appropriate rights or permissions to access the original source URL.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="bg-white dark:bg-fb-cardDark rounded-xl border border-slate-200 dark:border-fb-borderDark overflow-hidden">
+                    <button onclick="toggleFaq(this)" class="w-full p-4 sm:p-5 text-left font-semibold text-sm sm:text-base flex items-center justify-between cursor-pointer">
+                        <span>Where are downloaded Facebook videos saved on my phone or PC?</span>
+                        <i class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-200"></i>
+                    </button>
+                    <div class="hidden p-4 sm:p-5 pt-0 text-slate-500 dark:text-fb-subDark text-sm border-t border-slate-100 dark:border-fb-borderDark/50">
+                        Downloaded files are automatically saved in your browser's default download folder (e.g., "Downloads" folder on PC/Mac, Files app on iPhone, or Gallery/Downloads on Android).
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="bg-white dark:bg-fb-cardDark rounded-xl border border-slate-200 dark:border-fb-borderDark overflow-hidden">
+                    <button onclick="toggleFaq(this)" class="w-full p-4 sm:p-5 text-left font-semibold text-sm sm:text-base flex items-center justify-between cursor-pointer">
+                        <span>Does FBVideoSave store or host downloaded videos?</span>
+                        <i class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-200"></i>
+                    </button>
+                    <div class="hidden p-4 sm:p-5 pt-0 text-slate-500 dark:text-fb-subDark text-sm border-t border-slate-100 dark:border-fb-borderDark/50">
+                        No. FBVideoSave does not host videos or keep copies of downloaded content. All videos are downloaded directly from Facebook's Content Delivery Network (CDN) servers.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="bg-white dark:bg-fb-cardDark rounded-xl border border-slate-200 dark:border-fb-borderDark overflow-hidden">
+                    <button onclick="toggleFaq(this)" class="w-full p-4 sm:p-5 text-left font-semibold text-sm sm:text-base flex items-center justify-between cursor-pointer">
+                        <span>Is it free to download Facebook videos here?</span>
+                        <i class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-200"></i>
+                    </button>
+                    <div class="hidden p-4 sm:p-5 pt-0 text-slate-500 dark:text-fb-subDark text-sm border-t border-slate-100 dark:border-fb-borderDark/50">
+                        Yes! FBVideoSave is 100% free to use with no hidden fees, software limits, or account registration requirements.
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-white dark:bg-fb-cardDark border-t border-slate-200 dark:border-fb-borderDark py-8 transition-colors">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <div class="w-7 h-7 rounded-full bg-fb-blue flex items-center justify-center text-white text-xs font-bold">
+                    <i class="fa-brands fa-facebook-f"></i>
+                </div>
+                <span class="font-extrabold text-base">FBVideo<span class="text-fb-blue">Save</span></span>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-fb-subDark max-w-md mx-auto mb-4">
+                This website is for educational and personal backup demonstration purposes. We are not affiliated with Meta or Facebook.
+            </p>
+            <div class="text-xs text-slate-400 dark:text-slate-600">
+                &copy; <span id="year">2026</span> FBVideoSave. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Sample Video Metadata Database for Simulation
+        const SAMPLE_VIDEOS = {
+            reel: {
+                url: "https://www.facebook.com/reel/10293847563",
+                title: "Amazing Travel Reel - Breathtaking Mountain Views 🌄 #travel #reels",
+                author: "Nature Explorers",
+                views: "482.1K views",
+                duration: "00:45",
+                thumbnail: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80"
+            },
+            watch: {
+                url: "https://www.facebook.com/watch/?v=9876543210",
+                title: "10-Minute Delicious Quick Pasta Recipe | Easy Cooking Tips",
+                author: "Master Chef Daily",
+                views: "1.2M views",
+                duration: "10:15",
+                thumbnail: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=800&q=80"
+            },
+            hd: {
+                url: "https://www.facebook.com/facebook/videos/10158300000000000/",
+                title: "Future of Technology & AI Innovation Showcase 2026 Keynote",
+                author: "Tech World Official",
+                views: "890.3K views",
+                duration: "05:20",
+                thumbnail: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80"
+            }
+        };
+
+        // DOM Elements
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const themeIcon = document.getElementById('themeIcon');
+        const videoUrlInput = document.getElementById('videoUrlInput');
+        const resultSection = document.getElementById('resultSection');
+        const loadingCard = document.getElementById('loadingCard');
+        const previewCard = document.getElementById('previewCard');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+
+        // Theme Switcher Logic
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                html.classList.add('light');
+                themeIcon.className = 'fa-solid fa-moon text-lg';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.remove('light');
+                html.classList.add('dark');
+                themeIcon.className = 'fa-solid fa-sun text-lg';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Initialize preferred dark mode theme
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            toggleTheme();
+        }
+
+        // Fill Sample URLs into input
+        function fillSample(type) {
+            const data = SAMPLE_VIDEOS[type];
+            if (data) {
+                videoUrlInput.value = data.url;
+                showToast("Sample URL loaded!", "fa-circle-check");
+            }
+        }
+
+        // Clipboard Paste Helper
+        function pasteFromClipboard() {
+            if (navigator.clipboard && navigator.clipboard.readText) {
+                navigator.clipboard.readText()
+                    .then(text => {
+                        if (text) {
+                            videoUrlInput.value = text;
+                            showToast("Pasted from clipboard!", "fa-paste");
+                        }
+                    })
+                    .catch(() => {
+                        showToast("Please press Ctrl+V to paste manually", "fa-circle-info");
+                    });
+            } else {
+                showToast("Clipboard API not supported in iframe", "fa-circle-info");
+            }
+        }
+
+        // Handle Download Request Simulation
+        function handleDownload(e) {
+            e.preventDefault();
+            const url = videoUrlInput.value.trim();
+
+            if (!url) {
+                showToast("Please enter a valid Facebook URL", "fa-triangle-exclamation");
+                return;
+            }
+
+            // Show result section & reset states
+            resultSection.classList.remove('hidden');
+            loadingCard.classList.remove('hidden');
+            previewCard.classList.add('hidden');
+            
+            // Scroll to progress card
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            // Simulate parsing progress
+            let progress = 10;
+            progressBar.style.width = `${progress}%`;
+            progressText.innerText = `${progress}% - Resolving video headers...`;
+
+            const interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 25) + 15;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    
+                    setTimeout(() => {
+                        renderVideoResult(url);
+                    }, 400);
+                }
+                progressBar.style.width = `${progress}%`;
+                progressText.innerText = `${progress}% - Extracting MP4 streams...`;
+            }, 300);
+        }
+
+        // Render Video Result Metadata Card
+        function renderVideoResult(url) {
+            loadingCard.classList.add('hidden');
+            previewCard.classList.remove('hidden');
+
+            // Select video sample data based on input or default
+            let meta = SAMPLE_VIDEOS.hd;
+            if (url.includes('reel')) meta = SAMPLE_VIDEOS.reel;
+            else if (url.includes('watch')) meta = SAMPLE_VIDEOS.watch;
+
+            document.getElementById('resThumbnail').src = meta.thumbnail;
+            document.getElementById('resTitle').innerText = meta.title;
+            document.getElementById('resAuthor').innerText = meta.author;
+            document.getElementById('resViews').innerText = meta.views;
+            document.getElementById('resDuration').innerText = meta.duration;
+        }
+
+        // Trigger Simulated File Download
+        function triggerDownload(format) {
+            showToast(`Starting ${format.toUpperCase()} download...`, "fa-circle-down");
+            
+            // Simulate blob/file trigger
+            setTimeout(() => {
+                const element = document.createElement('a');
+                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent("FBVideoSave Educational Download File Simulation"));
+                element.setAttribute('download', `FB_Video_${format}_FBVideoSave.mp4`);
+                element.style.display = 'none';
+                document.body.appendChild(element);
+                element.click();
+                document.body.removeChild(element);
+            }, 800);
+        }
+
+        // FAQ Toggle
+        function toggleFaq(button) {
+            const content = button.nextElementSibling;
+            const icon = button.querySelector('i');
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                content.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Reset App State
+        function resetApp() {
+            videoUrlInput.value = '';
+            resultSection.classList.add('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Show Toast Message
+        function showToast(message, iconClass = "fa-circle-check") {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMsg.innerText = message;
+            toastIcon.className = `fa-solid ${iconClass} text-green-400`;
+
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
