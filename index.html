@@ -1,0 +1,737 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7109188480790495"
+     crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudyHub</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}
+body{background:#f4f7fb;color:#172033}
+button{cursor:pointer;border:0}
+.hidden{display:none!important}
+input,select{font-size:15px}
+#authScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(135deg,#667eea,#764ba2)}
+.auth-card{width:100%;max-width:430px;background:white;border-radius:22px;padding:30px;box-shadow:0 20px 60px #0003}
+.logo{text-align:center;font-size:34px;font-weight:800;margin-bottom:8px}
+.subtitle{text-align:center;color:#687386;margin-bottom:25px}
+.auth-card input,.auth-card select{width:100%;padding:13px 15px;border:1px solid #d8deea;border-radius:12px;margin-bottom:12px;outline:none}
+.auth-card input:focus,.auth-card select:focus{border-color:#667eea}
+.primary-btn,.google-btn,.secondary-btn{width:100%;padding:13px;border-radius:12px;font-weight:700;margin-bottom:10px}
+.primary-btn{background:#667eea;color:white}
+.google-btn{background:white;color:#222;border:1px solid #ddd}
+.secondary-btn{background:#eef1f7;color:#374151}
+.auth-switch{text-align:center;margin-top:12px;color:#667386;font-size:14px}
+.auth-switch button{background:none;color:#667eea;font-weight:700}
+.auth-error{color:#dc2626;background:#fff1f2;padding:10px;border-radius:10px;margin-bottom:12px;font-size:14px;overflow-wrap:anywhere}
+.auth-note{font-size:12px;color:#687386;margin:0 0 12px;line-height:1.5}
+#recaptcha-container{margin:8px 0 12px;overflow-x:auto}
+#app{min-height:100vh}
+.topbar{height:70px;background:white;border-bottom:1px solid #e4e8f0;display:flex;align-items:center;justify-content:space-between;padding:0 25px;position:sticky;top:0;z-index:20}
+.brand{font-size:25px;font-weight:800;color:#667eea}
+.user-mini{display:flex;align-items:center;gap:10px}
+.avatar{width:42px;height:42px;flex-shrink:0;border-radius:50%;background:#667eea;color:white;display:flex;align-items:center;justify-content:center;font-weight:800}
+.logout-btn{padding:9px 14px;border-radius:10px;background:#fee2e2;color:#b91c1c;font-weight:700}
+.layout{display:flex;min-height:calc(100vh - 70px)}
+.sidebar{width:230px;flex-shrink:0;background:white;border-right:1px solid #e4e8f0;padding:20px 12px}
+.nav-btn{width:100%;text-align:left;padding:13px 15px;border-radius:11px;background:transparent;color:#596579;font-size:15px;font-weight:700;margin-bottom:5px}
+.nav-btn:hover,.nav-btn.active{background:#eef0ff;color:#5966d8}
+.main{flex:1;padding:28px;min-width:0;max-width:1300px}
+.page{display:none}.page.active{display:block}
+.page-title{font-size:28px;margin-bottom:7px}
+.page-subtitle{color:#738096;margin-bottom:25px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.stat-card{background:white;padding:22px;border-radius:17px;box-shadow:0 4px 15px #1e28500d}
+.stat-card h3{color:#7a8597;font-size:14px;margin-bottom:8px}
+.stat-card strong{font-size:30px}
+.subject-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px}
+.subject-card{background:white;border-radius:17px;padding:25px;box-shadow:0 4px 15px #1e28500d;font-weight:700}
+.task-form,.friend-search{background:white;padding:20px;border-radius:17px;margin-bottom:20px}
+.task-form input,.task-form select{padding:12px;border:1px solid #dce1eb;border-radius:10px;margin:0 7px 8px 0}
+.task-list,.people{display:flex;flex-direction:column;gap:10px}
+.task{background:white;padding:17px;border-radius:14px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.task.done{opacity:.6;text-decoration:line-through}
+.delete-task{background:#fee2e2;color:#b91c1c;padding:7px 10px;border-radius:8px}
+.search-row{display:flex;gap:10px}
+.search-row input{flex:1;min-width:0;padding:13px 15px;border:1px solid #dce1eb;border-radius:11px}
+.search-row button{padding:13px 20px;background:#667eea;color:white;border-radius:11px;font-weight:700}
+.section{margin-top:25px}.section h2{margin-bottom:12px}
+.person-card{background:white;padding:15px;border-radius:15px;display:flex;justify-content:space-between;align-items:center;gap:15px}
+.person-info{display:flex;align-items:center;gap:12px;min-width:0}
+.person-name{font-weight:800;margin-bottom:4px;overflow-wrap:anywhere}
+.person-email{color:#7a8597;font-size:13px;margin-top:2px;overflow-wrap:anywhere}
+.small-btn{padding:9px 13px;border-radius:9px;background:#667eea;color:white;font-weight:700;margin:2px}
+.chat-btn,.accept-btn{background:#10b981}
+.pending-btn{background:#e5e7eb;color:#555}
+.danger-btn{background:#fee2e2;color:#b91c1c}
+.empty{background:white;padding:25px;text-align:center;color:#788398;border-radius:14px}
+.error{background:#fff1f2;color:#b91c1c;padding:15px;border-radius:12px;overflow-wrap:anywhere}
+.chat-box{position:fixed;right:20px;bottom:20px;width:370px;max-width:calc(100vw - 40px);height:530px;background:white;border-radius:18px;box-shadow:0 15px 50px #0003;z-index:100;display:flex;flex-direction:column;overflow:hidden}
+.chat-header{background:#667eea;color:white;padding:15px;display:flex;justify-content:space-between;align-items:center}
+.chat-header button{background:#ffffff33;color:white;width:32px;height:32px;border-radius:8px}
+.messages{flex:1;padding:15px;overflow-y:auto;background:#f5f7fb}
+.message{max-width:78%;padding:10px 13px;border-radius:14px;margin-bottom:9px;line-height:1.4;overflow-wrap:anywhere}
+.message.mine{margin-left:auto;background:#667eea;color:white;border-bottom-right-radius:4px}
+.message.theirs{background:white;border:1px solid #e5e8ef;border-bottom-left-radius:4px}
+.chat-form{display:flex;gap:7px;padding:10px;border-top:1px solid #e5e8ef}
+.chat-form input{flex:1;min-width:0;padding:11px;border:1px solid #dce1eb;border-radius:10px}
+.chat-form button{background:#667eea;color:white;padding:0 16px;border-radius:10px}
+.profile-card{background:white;border-radius:18px;padding:25px;max-width:600px}
+.profile-row{padding:13px 0;border-bottom:1px solid #edf0f5;overflow-wrap:anywhere}
+.profile-row span{color:#788398;display:block;font-size:13px;margin-bottom:4px}
+.timer-card{background:white;border-radius:20px;padding:40px;text-align:center;max-width:500px}
+.timer{font-size:65px;font-weight:800;margin:25px 0}
+.timer-buttons{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.timer-buttons button{padding:12px 20px;border-radius:10px;background:#667eea;color:white;font-weight:700}
+@media(max-width:800px){
+.sidebar{width:70px;padding:10px 7px}
+.nav-btn{font-size:0;text-align:center;padding:13px 5px}
+.nav-btn::first-letter{font-size:20px}
+.main{padding:18px}
+.stats{grid-template-columns:1fr}
+.topbar{padding:0 14px}
+.brand{font-size:20px}
+.user-mini{gap:6px}.user-mini #topName{max-width:75px;overflow:hidden;text-overflow:ellipsis}
+.person-card{align-items:flex-start;flex-direction:column}
+.chat-box{right:10px;bottom:10px;width:calc(100vw - 20px)}
+.task{align-items:flex-start;flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<div id="authScreen">
+<div class="auth-card">
+<div class="logo">📚 StudyHub</div>
+<div class="subtitle">Your student study space</div>
+<div id="authError" aria-live="polite"></div>
+
+<div id="loginForm">
+<input id="loginEmail" type="email" placeholder="Email" autocomplete="email">
+<input id="loginPassword" type="password" placeholder="Password" autocomplete="current-password">
+<button class="primary-btn" onclick="loginEmail()">Login with Email</button>
+<button class="google-btn" onclick="loginGoogle()">🔵 Continue with Google</button>
+<button class="secondary-btn" onclick="showPhone('login')">📱 Login with Phone OTP</button>
+<div class="auth-switch">Don't have an account? <button onclick="showSignup()">Create account</button></div>
+</div>
+
+<div id="signupForm" class="hidden">
+<input id="signupName" type="text" placeholder="Full name" autocomplete="name">
+<select id="signupClass">
+<option value="">Select class</option>
+<option>Below Class 9</option><option>Class 9</option><option>Class 10</option>
+<option>Class 11</option><option>Class 12</option><option>Other</option>
+</select>
+<input id="signupEmail" type="email" placeholder="Email" autocomplete="email">
+<input id="signupPassword" type="password" placeholder="Password (at least 6 characters)" autocomplete="new-password">
+<input id="signupConfirm" type="password" placeholder="Confirm password" autocomplete="new-password">
+<button class="primary-btn" onclick="signupEmail()">Create Account with Email</button>
+<button class="google-btn" onclick="loginGoogle(true)">🔵 Sign up with Google</button>
+<button class="secondary-btn" onclick="showPhone('signup')">📱 Sign up with Phone OTP</button>
+<div class="auth-switch">Already have an account? <button onclick="showLogin()">Login</button></div>
+</div>
+
+<div id="phoneForm" class="hidden">
+<p class="auth-note">Enter your phone number in international format, for example +923001234567. Firebase will send an SMS verification code.</p>
+<div id="phoneSignupDetails">
+<input id="phoneName" type="text" placeholder="Full name" autocomplete="name">
+<select id="phoneClass">
+<option value="">Select class</option>
+<option>Below Class 9</option><option>Class 9</option><option>Class 10</option>
+<option>Class 11</option><option>Class 12</option><option>Other</option>
+</select>
+</div>
+<input id="phoneNumber" type="tel" placeholder="Phone number, e.g. +923001234567" autocomplete="tel">
+<div id="recaptcha-container"></div>
+<button id="sendOtpBtn" class="primary-btn" onclick="sendPhoneOtp()">Send verification code</button>
+<div id="otpArea" class="hidden">
+<input id="phoneOtp" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="Enter SMS verification code">
+<button class="primary-btn" onclick="verifyPhoneOtp()">Verify code and continue</button>
+</div>
+<button class="secondary-btn" onclick="resetPhoneForm()">Reset phone verification</button>
+<div class="auth-switch"><button onclick="showLogin()">Back to login</button> · <button onclick="showSignup()">Email signup</button></div>
+</div>
+</div>
+</div>
+
+<div id="app" class="hidden">
+<div class="topbar">
+<div class="brand">📚 StudyHub</div>
+<div class="user-mini"><div class="avatar" id="topAvatar">S</div><span id="topName">Student</span><button class="logout-btn" onclick="logout()">Logout</button></div>
+</div>
+<div class="layout">
+<aside class="sidebar">
+<button class="nav-btn active" onclick="showPage('dashboard',this)">🏠 Dashboard</button>
+<button class="nav-btn" onclick="showPage('subjects',this)">📚 Subjects</button>
+<button class="nav-btn" onclick="showPage('tasks',this)">✅ Tasks</button>
+<button class="nav-btn" onclick="showPage('friends',this)">👥 Friends</button>
+<button class="nav-btn" onclick="showPage('focus',this)">⏱️ Focus</button>
+<button class="nav-btn" onclick="showPage('profile',this)">👤 Profile</button>
+</aside>
+<main class="main">
+
+<section id="dashboard" class="page active">
+<h1 class="page-title">Welcome to StudyHub 👋</h1>
+<p class="page-subtitle">Study smarter. Stay organized. Connect with classmates.</p>
+<div class="stats">
+<div class="stat-card"><h3>Tasks</h3><strong id="taskCount">0</strong></div>
+<div class="stat-card"><h3>Friends</h3><strong id="friendCount">0</strong></div>
+<div class="stat-card"><h3>Focus Minutes</h3><strong id="focusCount">0</strong></div>
+</div>
+</section>
+
+<section id="subjects" class="page">
+<h1 class="page-title">Subjects</h1><p class="page-subtitle">Your study subjects</p>
+<div id="subjectGrid" class="subject-grid"></div>
+</section>
+
+<section id="tasks" class="page">
+<h1 class="page-title">Tasks</h1><p class="page-subtitle">Manage your study work</p>
+<div class="task-form">
+<input id="taskInput" type="text" placeholder="Enter a task...">
+<select id="taskSubject">
+<option>General</option><option>Mathematics</option><option>English</option><option>Physics</option><option>Chemistry</option><option>Biology</option><option>Urdu</option><option>Islamiat</option><option>Computer</option>
+</select>
+<button class="small-btn" onclick="addTask()">+ Add Task</button>
+</div>
+<div id="taskList" class="task-list"></div>
+</section>
+
+<section id="friends" class="page">
+<h1 class="page-title">Friends</h1><p class="page-subtitle">Find classmates and chat with your friends.</p>
+<div class="friend-search"><div class="search-row">
+<input id="friendSearchInput" type="text" placeholder="Search by name, email or phone..." onkeydown="if(event.key==='Enter')searchStudents()">
+<button onclick="searchStudents()">Search</button>
+</div></div>
+<div class="section"><h2>Search Results</h2><div id="searchResults" class="people"><div class="empty">Search for a student.</div></div></div>
+<div class="section"><h2>Friend Requests</h2><div id="requestsList" class="people"><div class="empty">No pending requests.</div></div></div>
+<div class="section"><h2>My Friends</h2><div id="friendsList" class="people"><div class="empty">You don't have any friends yet.</div></div></div>
+</section>
+
+<section id="focus" class="page">
+<h1 class="page-title">Focus Timer</h1><p class="page-subtitle">Concentrate on your studies.</p>
+<div class="timer-card"><h2>Focus Session</h2><div id="timer" class="timer">25:00</div>
+<div class="timer-buttons"><button onclick="startTimer()">Start</button><button onclick="pauseTimer()">Pause</button><button onclick="resetTimer()">Reset</button></div>
+</div></section>
+
+<section id="profile" class="page">
+<h1 class="page-title">Profile</h1><p class="page-subtitle">Your StudyHub profile</p>
+<div class="profile-card">
+<div class="profile-row"><span>Name</span><strong id="profileName">—</strong></div>
+<div class="profile-row"><span>Email</span><strong id="profileEmail">—</strong></div>
+<div class="profile-row"><span>Phone</span><strong id="profilePhone">—</strong></div>
+<div class="profile-row"><span>Class</span><strong id="profileClass">—</strong></div>
+</div></section>
+</main>
+</div>
+</div>
+
+<div id="chatBox" class="chat-box hidden">
+<div class="chat-header"><strong id="chatName">Chat</strong><button onclick="closeChat()">✕</button></div>
+<div id="messages" class="messages"></div>
+<form class="chat-form" onsubmit="sendMessage(event)">
+<input id="messageInput" type="text" placeholder="Type a message..." autocomplete="off">
+<button type="submit">Send</button>
+</form>
+</div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+import {
+ getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,
+ onAuthStateChanged,signOut,updateProfile,GoogleAuthProvider,
+ signInWithPopup,RecaptchaVerifier,signInWithPhoneNumber
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
+import {
+ getFirestore,doc,setDoc,getDoc,collection,query,where,getDocs,
+ updateDoc,deleteDoc,onSnapshot,serverTimestamp,orderBy,limit,addDoc
+} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+
+const firebaseConfig={
+ apiKey:"AIzaSyDlXmNAWWfoO_g7USoYcSkkItTXGyiQvDE",
+ authDomain:"study-hub-f9904.firebaseapp.com",
+ projectId:"study-hub-f9904",
+ storageBucket:"study-hub-f9904.firebasestorage.app",
+ messagingSenderId:"313440146173",
+ appId:"1:313440146173:web:63c0d18702331894236494",
+ measurementId:"G-WXG708MRJS"
+};
+
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+
+let currentChatUid=null;
+let unsubscribeMessages=null;
+let unsubscribeRequests=null;
+let unsubscribeFriends=null;
+let timerSeconds=1500;
+let timerInterval=null;
+let timerRunning=false;
+let recaptchaVerifier=null;
+let confirmationResult=null;
+let phoneMode="login";
+let phoneSignupProfile={name:"",studentClass:""};
+
+function el(id){return document.getElementById(id)}
+function escapeHTML(value){
+ return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+}
+function showAuthError(message){el("authError").innerHTML=`<div class="auth-error">${escapeHTML(message)}</div>`}
+function clearAuthError(){el("authError").innerHTML=""}
+function firebaseError(error){
+ const code=error?.code||"";
+ const messages={
+ "auth/invalid-credential":"Incorrect email or password.",
+ "auth/invalid-login-credentials":"Incorrect email or password.",
+ "auth/email-already-in-use":"This email is already registered.",
+ "auth/weak-password":"Password must be at least 6 characters.",
+ "auth/invalid-email":"Please enter a valid email.",
+ "auth/popup-closed-by-user":"Google login was cancelled.",
+ "auth/popup-blocked":"Your browser blocked the Google login popup. Allow popups and try again.",
+ "auth/unauthorized-domain":"This website domain is not authorized in Firebase Authentication settings.",
+ "auth/operation-not-allowed":"This sign-in method is not enabled in Firebase Authentication.",
+ "auth/api-key-not-valid.-please-pass-a-valid-api-key.":"The Firebase API key is invalid. Check your web app configuration.",
+ "auth/invalid-phone-number":"Enter a valid phone number with its country code, such as +923001234567.",
+ "auth/missing-phone-number":"Enter your phone number.",
+ "auth/invalid-verification-code":"The SMS verification code is incorrect.",
+ "auth/code-expired":"The SMS verification code has expired. Send a new code.",
+ "auth/too-many-requests":"Too many attempts. Wait a while and try again.",
+ "auth/captcha-check-failed":"reCAPTCHA verification failed. Reset phone verification and try again.",
+ "permission-denied":"Firestore permission denied. Check your Firestore security rules.",
+ "unavailable":"Firebase is temporarily unavailable. Check your connection and try again."
+ };
+ return messages[code]||error?.message||"Something went wrong.";
+}
+
+window.showSignup=()=>{clearAuthError();el("loginForm").classList.add("hidden");el("phoneForm").classList.add("hidden");el("signupForm").classList.remove("hidden")};
+window.showLogin=()=>{clearAuthError();el("signupForm").classList.add("hidden");el("phoneForm").classList.add("hidden");el("loginForm").classList.remove("hidden")};
+
+window.loginEmail=async()=>{
+ clearAuthError();
+ const email=el("loginEmail").value.trim().toLowerCase();
+ const password=el("loginPassword").value;
+ if(!email||!password){showAuthError("Enter your email and password.");return}
+ try{await signInWithEmailAndPassword(auth,email,password)}
+ catch(e){console.error(e);showAuthError(firebaseError(e))}
+};
+
+window.signupEmail=async()=>{
+ clearAuthError();
+ const name=el("signupName").value.trim();
+ const studentClass=el("signupClass").value;
+ const email=el("signupEmail").value.trim().toLowerCase();
+ const password=el("signupPassword").value;
+ const confirm=el("signupConfirm").value;
+ if(!name||!studentClass||!email||!password){showAuthError("Complete all fields.");return}
+ if(password.length<6){showAuthError("Password must be at least 6 characters.");return}
+ if(password!==confirm){showAuthError("Passwords do not match.");return}
+ try{
+  const credential=await createUserWithEmailAndPassword(auth,email,password);
+  await updateProfile(credential.user,{displayName:name});
+  await ensureUserDocument(credential.user,{name,class:studentClass});
+ }catch(e){console.error(e);showAuthError(firebaseError(e))}
+};
+
+window.loginGoogle=async()=>{
+ clearAuthError();
+ try{
+  const result=await signInWithPopup(auth,new GoogleAuthProvider());
+  await ensureUserDocument(result.user);
+ }catch(e){console.error(e);showAuthError(firebaseError(e))}
+};
+
+async function ensureUserDocument(user,extraData={}){
+ const ref=doc(db,"users",user.uid);
+ const snap=await getDoc(ref);
+ const old=snap.exists()?snap.data():{};
+ const name=String(extraData.name||old.name||user.displayName||"Student").trim();
+ const studentClass=extraData.class||old.class||"";
+ await setDoc(ref,{
+  uid:user.uid,
+  name,
+  nameLower:name.toLowerCase(),
+  email:user.email||old.email||"",
+  phone:user.phoneNumber||extraData.phone||old.phone||"",
+  class:studentClass,
+  createdAt:old.createdAt||serverTimestamp()
+ },{merge:true});
+}
+
+window.showPhone=(mode)=>{
+ clearAuthError();
+ phoneMode=mode;
+ el("loginForm").classList.add("hidden");
+ el("signupForm").classList.add("hidden");
+ el("phoneForm").classList.remove("hidden");
+ el("phoneSignupDetails").classList.toggle("hidden",mode!=="signup");
+ el("otpArea").classList.add("hidden");
+ el("sendOtpBtn").classList.remove("hidden");
+ el("phoneOtp").value="";
+};
+
+function clearRecaptcha(){
+ if(recaptchaVerifier){
+  try{recaptchaVerifier.clear()}catch(e){console.warn("reCAPTCHA cleanup:",e)}
+  recaptchaVerifier=null;
+ }
+ el("recaptcha-container").innerHTML="";
+ confirmationResult=null;
+}
+
+window.resetPhoneForm=()=>{
+ clearRecaptcha();
+ el("otpArea").classList.add("hidden");
+ el("sendOtpBtn").classList.remove("hidden");
+ el("phoneOtp").value="";
+ clearAuthError();
+};
+
+window.sendPhoneOtp=async()=>{
+ clearAuthError();
+ const phone=el("phoneNumber").value.trim();
+ if(!/^\+[1-9]\d{7,14}$/.test(phone)){
+  showAuthError("Use international format, e.g. +923001234567.");
+  return;
+ }
+ if(phoneMode==="signup"){
+  const name=el("phoneName").value.trim();
+  const studentClass=el("phoneClass").value;
+  if(!name||!studentClass){showAuthError("Enter your name and select your class.");return}
+  phoneSignupProfile={name,studentClass};
+ }
+ try{
+  clearRecaptcha();
+  recaptchaVerifier=new RecaptchaVerifier(auth,el("recaptcha-container"),{size:"normal"});
+  await recaptchaVerifier.render();
+  confirmationResult=await signInWithPhoneNumber(auth,phone,recaptchaVerifier);
+  el("otpArea").classList.remove("hidden");
+  el("sendOtpBtn").classList.add("hidden");
+  showAuthError("Verification code sent. Check your SMS messages.");
+ }catch(e){
+  console.error(e);
+  showAuthError(firebaseError(e));
+  if(recaptchaVerifier){
+   try{recaptchaVerifier.clear()}catch{}
+   recaptchaVerifier=null;
+  }
+ }
+};
+
+window.verifyPhoneOtp=async()=>{
+ clearAuthError();
+ const code=el("phoneOtp").value.trim();
+ if(!confirmationResult){showAuthError("Request a verification code first.");return}
+ if(!code){showAuthError("Enter the SMS verification code.");return}
+ try{
+  const result=await confirmationResult.confirm(code);
+  await ensureUserDocument(result.user,phoneMode==="signup"?{
+   name:phoneSignupProfile.name,
+   class:phoneSignupProfile.studentClass,
+   phone:result.user.phoneNumber||el("phoneNumber").value.trim()
+  }:{phone:result.user.phoneNumber||el("phoneNumber").value.trim()});
+  clearRecaptcha();
+ }catch(e){console.error(e);showAuthError(firebaseError(e))}
+};
+
+onAuthStateChanged(auth,async user=>{
+ if(user){
+  el("authScreen").classList.add("hidden");
+  el("app").classList.remove("hidden");
+  try{
+   await ensureUserDocument(user);
+   await loadProfile();
+   loadTasks();
+   loadSubjects();
+   updateFocusCount();
+   startFriendListeners();
+  }catch(e){
+   console.error("App initialization error:",e);
+   alert("StudyHub could not load some data: "+firebaseError(e));
+  }
+ }else{
+  el("authScreen").classList.remove("hidden");
+  el("app").classList.add("hidden");
+  stopFriendListeners();
+  closeChat();
+ }
+});
+
+window.logout=async()=>{
+ try{await signOut(auth)}catch(e){console.error(e);alert(firebaseError(e))}
+};
+
+window.showPage=(pageId,button)=>{
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ el(pageId)?.classList.add("active");
+ document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+ if(button)button.classList.add("active");
+};
+
+async function loadProfile(){
+ const user=auth.currentUser;if(!user)return;
+ const snap=await getDoc(doc(db,"users",user.uid));
+ const d=snap.exists()?snap.data():{};
+ el("topName").textContent=d.name||user.displayName||"Student";
+ el("topAvatar").textContent=(d.name||user.displayName||"S").charAt(0).toUpperCase();
+ el("profileName").textContent=d.name||user.displayName||"—";
+ el("profileEmail").textContent=d.email||user.email||"—";
+ el("profilePhone").textContent=d.phone||user.phoneNumber||"—";
+ el("profileClass").textContent=d.class||"Not selected";
+}
+
+function loadSubjects(){
+ const subjects=["📐 Mathematics","📖 English","🔬 Physics","🧪 Chemistry","🧬 Biology","📝 Urdu","☪️ Islamiat","💻 Computer","🌐 Sindhi","📚 Pakistan Studies"];
+ el("subjectGrid").innerHTML=subjects.map(s=>`<div class="subject-card">${s}</div>`).join("");
+}
+
+function taskKey(){return auth.currentUser?`studyhub_tasks_${auth.currentUser.uid}`:"studyhub_tasks"}
+function getTasks(){try{return JSON.parse(localStorage.getItem(taskKey())||"[]")}catch{return []}}
+function saveTasks(tasks){localStorage.setItem(taskKey(),JSON.stringify(tasks))}
+function loadTasks(){renderTasks(getTasks())}
+function renderTasks(tasks){
+ el("taskCount").textContent=tasks.length;
+ if(!tasks.length){el("taskList").innerHTML='<div class="empty">No tasks yet.</div>';return}
+ el("taskList").innerHTML=tasks.map((t,i)=>`
+ <div class="task ${t.done?"done":""}">
+  <div><strong>${escapeHTML(t.text)}</strong><div class="person-email">${escapeHTML(t.subject)}</div></div>
+  <div><button class="small-btn" onclick="toggleTask(${i})">${t.done?"Undo":"Done"}</button><button class="delete-task" onclick="deleteTask(${i})">Delete</button></div>
+ </div>`).join("");
+}
+window.addTask=()=>{
+ const input=el("taskInput"),text=input.value.trim();
+ if(!text)return;
+ const tasks=getTasks();tasks.push({text,subject:el("taskSubject").value,done:false});
+ saveTasks(tasks);input.value="";renderTasks(tasks);
+};
+window.toggleTask=i=>{const t=getTasks();if(!t[i])return;t[i].done=!t[i].done;saveTasks(t);renderTasks(t)};
+window.deleteTask=i=>{const t=getTasks();t.splice(i,1);saveTasks(t);renderTasks(t)};
+
+function createFriendshipId(a,b){return [a,b].sort().join("_")}
+async function getFriendStatus(myUid,otherUid){
+ const f=await getDoc(doc(db,"friendships",createFriendshipId(myUid,otherUid)));
+ if(f.exists())return "friends";
+ const outgoing=await getDoc(doc(db,"friendRequests",`${myUid}_${otherUid}`));
+ if(outgoing.exists()&&outgoing.data().status==="pending")return "outgoing";
+ const incoming=await getDoc(doc(db,"friendRequests",`${otherUid}_${myUid}`));
+ if(incoming.exists()&&incoming.data().status==="pending")return "incoming";
+ return "none";
+}
+
+window.searchStudents=async()=>{
+ const term=el("friendSearchInput").value.trim().toLowerCase();
+ const results=el("searchResults");
+ if(!term){results.innerHTML='<div class="empty">Type a name, email or phone number to search.</div>';return}
+ const user=auth.currentUser;
+ if(!user){results.innerHTML='<div class="error">You are not logged in.</div>';return}
+ results.innerHTML='<div class="empty">🔎 Searching students...</div>';
+ try{
+  const snap=await getDocs(collection(db,"users"));
+  const students=[];
+  snap.forEach(s=>{
+   if(s.id===user.uid)return;
+   const d=s.data();
+   const name=String(d.name||"").trim();
+   const email=String(d.email||"").trim();
+   const phone=String(d.phone||"").trim();
+   const haystack=[name,d.nameLower||"",email,phone].join(" ").toLowerCase();
+   if(haystack.includes(term))students.push({uid:d.uid||s.id,name:name||"Student",email,phone,class:d.class||""});
+  });
+  if(!students.length){results.innerHTML='<div class="empty">❌ No student found. The other student must have created a StudyHub account in this Firebase project.</div>';return}
+  results.innerHTML="";
+  for(const student of students){
+   const status=await getFriendStatus(user.uid,student.uid);
+   const div=document.createElement("div");div.className="person-card";
+   const info=document.createElement("div");info.className="person-info";
+   const avatar=document.createElement("div");avatar.className="avatar";avatar.textContent=student.name.charAt(0).toUpperCase();
+   const details=document.createElement("div");
+   const name=document.createElement("div");name.className="person-name";name.textContent=student.name;
+   const email=document.createElement("div");email.className="person-email";email.textContent=student.email||student.phone||"";
+   const cls=document.createElement("div");cls.className="person-email";cls.textContent=student.class||"Class not selected";
+   details.append(name,email,cls);info.append(avatar,details);
+   const actions=document.createElement("div");
+   const btn=document.createElement("button");btn.className="small-btn";
+   if(status==="friends"){btn.classList.add("chat-btn");btn.textContent="💬 Chat";btn.onclick=()=>openChat(student.uid)}
+   else if(status==="outgoing"){btn.classList.add("pending-btn");btn.textContent="⏳ Request Sent";btn.disabled=true}
+   else if(status==="incoming"){btn.classList.add("accept-btn");btn.textContent="✅ Accept Request";btn.onclick=()=>acceptIncomingByUser(student.uid)}
+   else{btn.textContent="➕ Add Friend";btn.onclick=()=>sendFriendRequest(student.uid)}
+   actions.appendChild(btn);div.append(info,actions);results.appendChild(div);
+  }
+ }catch(e){console.error("Student search error:",e);results.innerHTML=`<div class="error">❌ ${escapeHTML(firebaseError(e))}</div>`}
+};
+
+window.sendFriendRequest=async toUid=>{
+ const user=auth.currentUser;if(!user||user.uid===toUid)return;
+ try{
+  const existing=await getFriendStatus(user.uid,toUid);
+  if(existing!=="none"){alert(existing==="friends"?"You are already friends.":"A request already exists.");return}
+  await setDoc(doc(db,"friendRequests",`${user.uid}_${toUid}`),{fromUid:user.uid,toUid,status:"pending",createdAt:serverTimestamp()});
+  alert("Friend request sent!");
+  await searchStudents();
+ }catch(e){console.error(e);alert(firebaseError(e))}
+};
+
+function startFriendListeners(){if(!auth.currentUser)return;listenToRequests();listenToFriends()}
+function stopFriendListeners(){
+ if(unsubscribeRequests){unsubscribeRequests();unsubscribeRequests=null}
+ if(unsubscribeFriends){unsubscribeFriends();unsubscribeFriends=null}
+ if(unsubscribeMessages){unsubscribeMessages();unsubscribeMessages=null}
+}
+
+function listenToRequests(){
+ const user=auth.currentUser;if(!user)return;
+ if(unsubscribeRequests)unsubscribeRequests();
+ const q=query(collection(db,"friendRequests"),where("toUid","==",user.uid),where("status","==","pending"));
+ unsubscribeRequests=onSnapshot(q,async snap=>{
+  const list=el("requestsList");
+  if(snap.empty){list.innerHTML='<div class="empty">No pending requests.</div>';return}
+  list.innerHTML="";
+  for(const request of snap.docs){
+   const d=request.data();
+   try{
+    const userSnap=await getDoc(doc(db,"users",d.fromUid));
+    const sender=userSnap.exists()?userSnap.data():{name:"Student"};
+    const card=document.createElement("div");card.className="person-card";
+    const info=document.createElement("div");info.className="person-info";
+    const avatar=document.createElement("div");avatar.className="avatar";avatar.textContent=(sender.name||"S").charAt(0).toUpperCase();
+    const details=document.createElement("div");
+    const name=document.createElement("div");name.className="person-name";name.textContent=sender.name||"Student";
+    const contact=document.createElement("div");contact.className="person-email";contact.textContent=sender.email||sender.phone||"";
+    details.append(name,contact);info.append(avatar,details);
+    const actions=document.createElement("div");
+    const accept=document.createElement("button");accept.className="small-btn accept-btn";accept.textContent="Accept";accept.onclick=()=>acceptRequest(request.id,d.fromUid);
+    const reject=document.createElement("button");reject.className="small-btn danger-btn";reject.textContent="Reject";reject.onclick=()=>rejectRequest(request.id);
+    actions.append(accept,reject);card.append(info,actions);list.appendChild(card);
+   }catch(e){console.error(e)}
+  }
+ },e=>{console.error("Request listener:",e);el("requestsList").innerHTML=`<div class="error">${escapeHTML(firebaseError(e))}</div>`});
+}
+
+window.acceptRequest=async(requestId,fromUid)=>{
+ const user=auth.currentUser;if(!user)return;
+ try{
+  await setDoc(doc(db,"friendships",createFriendshipId(user.uid,fromUid)),{users:[user.uid,fromUid],createdAt:serverTimestamp()},{merge:true});
+  await updateDoc(doc(db,"friendRequests",requestId),{status:"accepted"});
+  await searchStudentsIfVisible();
+ }catch(e){console.error(e);alert(firebaseError(e))}
+};
+window.acceptIncomingByUser=async fromUid=>acceptRequest(`${fromUid}_${auth.currentUser.uid}`,fromUid);
+window.rejectRequest=async requestId=>{
+ try{await deleteDoc(doc(db,"friendRequests",requestId))}catch(e){console.error(e);alert(firebaseError(e))}
+};
+async function searchStudentsIfVisible(){if(!el("friends").classList.contains("active"))return; if(el("friendSearchInput").value.trim())await searchStudents()}
+
+function listenToFriends(){
+ const user=auth.currentUser;if(!user)return;
+ if(unsubscribeFriends)unsubscribeFriends();
+ const q=query(collection(db,"friendships"),where("users","array-contains",user.uid));
+ unsubscribeFriends=onSnapshot(q,async snap=>{
+  const list=el("friendsList");el("friendCount").textContent=snap.size;
+  if(snap.empty){list.innerHTML='<div class="empty">You don\'t have any friends yet.</div>';return}
+  list.innerHTML="";
+  for(const f of snap.docs){
+   const d=f.data();const otherUid=(d.users||[]).find(uid=>uid!==user.uid);if(!otherUid)continue;
+   try{
+    const s=await getDoc(doc(db,"users",otherUid));const friend=s.exists()?s.data():{name:"Student"};
+    const card=document.createElement("div");card.className="person-card";
+    const info=document.createElement("div");info.className="person-info";
+    const avatar=document.createElement("div");avatar.className="avatar";avatar.textContent=(friend.name||"S").charAt(0).toUpperCase();
+    const details=document.createElement("div");
+    const name=document.createElement("div");name.className="person-name";name.textContent=friend.name||"Student";
+    const contact=document.createElement("div");contact.className="person-email";contact.textContent=friend.email||friend.phone||"";
+    details.append(name,contact);info.append(avatar,details);
+    const actions=document.createElement("div");
+    const chat=document.createElement("button");chat.className="small-btn chat-btn";chat.textContent="💬 Chat";chat.onclick=()=>openChat(otherUid);
+    actions.append(chat);card.append(info,actions);list.appendChild(card);
+   }catch(e){console.error(e)}
+  }
+ },e=>{console.error("Friends listener:",e);el("friendsList").innerHTML=`<div class="error">${escapeHTML(firebaseError(e))}</div>`});
+}
+
+function createChatId(a,b){return [a,b].sort().join("_")}
+window.openChat=async friendUid=>{
+ const user=auth.currentUser;if(!user)return;
+ try{
+  const friendship=await getDoc(doc(db,"friendships",createFriendshipId(user.uid,friendUid)));
+  if(!friendship.exists()){alert("You must be friends before chatting.");return}
+  currentChatUid=friendUid;
+  const snap=await getDoc(doc(db,"users",friendUid));
+  el("chatName").textContent=snap.exists()?(snap.data().name||"Student"):"Student";
+  el("chatBox").classList.remove("hidden");
+  listenToChat(friendUid);
+  setTimeout(()=>el("messageInput").focus(),100);
+ }catch(e){console.error(e);alert(firebaseError(e))}
+};
+window.closeChat=()=>{
+ currentChatUid=null;
+ if(unsubscribeMessages){unsubscribeMessages();unsubscribeMessages=null}
+ el("chatBox").classList.add("hidden");
+};
+function listenToChat(friendUid){
+ const user=auth.currentUser;if(!user)return;
+ if(unsubscribeMessages)unsubscribeMessages();
+ const q=query(collection(db,"chats",createChatId(user.uid,friendUid),"messages"),orderBy("createdAt","asc"),limit(200));
+ unsubscribeMessages=onSnapshot(q,snap=>{
+  const messages=el("messages");messages.innerHTML="";
+  snap.forEach(m=>{
+   const d=m.data();const div=document.createElement("div");
+   div.className="message "+(d.senderUid===user.uid?"mine":"theirs");
+   div.textContent=d.text||"";messages.appendChild(div);
+  });
+  messages.scrollTop=messages.scrollHeight;
+ },e=>{console.error("Chat listener:",e);el("messages").innerHTML=`<div class="error">Unable to load chat: ${escapeHTML(firebaseError(e))}</div>`});
+}
+window.sendMessage=async event=>{
+ event.preventDefault();
+ const user=auth.currentUser,input=el("messageInput"),text=input.value.trim();
+ if(!user||!currentChatUid||!text)return;
+ try{
+  const f=await getDoc(doc(db,"friendships",createFriendshipId(user.uid,currentChatUid)));
+  if(!f.exists()){alert("You must be friends before chatting.");closeChat();return}
+  await addDoc(collection(db,"chats",createChatId(user.uid,currentChatUid),"messages"),{
+   senderUid:user.uid,receiverUid:currentChatUid,text,createdAt:serverTimestamp()
+  });
+  input.value="";
+ }catch(e){console.error(e);alert(firebaseError(e))}
+};
+
+function updateTimer(){
+ const m=String(Math.floor(timerSeconds/60)).padStart(2,"0");
+ const s=String(timerSeconds%60).padStart(2,"0");
+ el("timer").textContent=`${m}:${s}`;
+}
+function updateFocusCount(){
+ if(!auth.currentUser)return;
+ const seconds=Number(localStorage.getItem(`focus_${auth.currentUser.uid}`)||0);
+ el("focusCount").textContent=Math.floor(seconds/60);
+}
+window.startTimer=()=>{
+ if(timerRunning)return;
+ if(timerSeconds<=0)timerSeconds=1500;
+ timerRunning=true;
+ timerInterval=setInterval(()=>{
+  if(timerSeconds<=0){
+   clearInterval(timerInterval);timerRunning=false;
+   alert("Focus session complete! 🎉");return;
+  }
+  timerSeconds--;updateTimer();
+  if(auth.currentUser){
+   const key=`focus_${auth.currentUser.uid}`;
+   const used=Number(localStorage.getItem(key)||0)+1;
+   localStorage.setItem(key,String(used));
+   if(used%60===0)updateFocusCount();
+  }
+ },1000);
+};
+window.pauseTimer=()=>{
+ clearInterval(timerInterval);timerRunning=false;updateFocusCount();
+};
+window.resetTimer=()=>{
+ clearInterval(timerInterval);timerRunning=false;timerSeconds=1500;updateTimer();
+};
+updateTimer();
+</script>
+</body>
+</html>
