@@ -7,6 +7,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>StudyHub</title>
+<link rel="stylesheet" href="community.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}
 body{background:#f4f7fb;color:#172033}
@@ -38,6 +39,9 @@ input,select{font-size:15px}
 .sidebar{width:230px;flex-shrink:0;background:white;border-right:1px solid #e4e8f0;padding:20px 12px}
 .nav-btn{width:100%;text-align:left;padding:13px 15px;border-radius:11px;background:transparent;color:#596579;font-size:15px;font-weight:700;margin-bottom:5px}
 .nav-btn:hover,.nav-btn.active{background:#eef0ff;color:#5966d8}
+.source-code-link{display:flex;align-items:center;gap:10px;padding:13px 15px;margin-top:20px;border-top:1px solid #e4e8f0;color:#5966d8;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px}
+.source-code-link:hover{background:#eef0ff}
+.source-code-link svg{width:22px;height:22px;flex-shrink:0}
 .main{flex:1;padding:28px;min-width:0;max-width:1300px}
 .page{display:none}.page.active{display:block}
 .page-title{font-size:28px;margin-bottom:7px}
@@ -68,25 +72,30 @@ input,select{font-size:15px}
 .danger-btn{background:#fee2e2;color:#b91c1c}
 .empty{background:white;padding:25px;text-align:center;color:#788398;border-radius:14px}
 .error{background:#fff1f2;color:#b91c1c;padding:15px;border-radius:12px;overflow-wrap:anywhere}
-.chat-box{position:fixed;right:20px;bottom:20px;width:370px;max-width:calc(100vw - 40px);height:530px;background:white;border-radius:18px;box-shadow:0 15px 50px #0003;z-index:100;display:flex;flex-direction:column;overflow:hidden}
 .chat-header{background:#667eea;color:white;padding:15px;display:flex;justify-content:space-between;align-items:center}
 .chat-header button{background:#ffffff33;color:white;width:32px;height:32px;border-radius:8px}
 .messages{flex:1;padding:15px;overflow-y:auto;background:#f5f7fb}
 .message{max-width:78%;padding:10px 13px;border-radius:14px;margin-bottom:9px;line-height:1.4;overflow-wrap:anywhere}
 .message.mine{margin-left:auto;background:#667eea;color:white;border-bottom-right-radius:4px}
 .message.theirs{background:white;border:1px solid #e5e8ef;border-bottom-left-radius:4px}
-.chat-form{display:flex;gap:7px;padding:10px;border-top:1px solid #e5e8ef}
-.chat-form input{flex:1;min-width:0;padding:11px;border:1px solid #dce1eb;border-radius:10px}
-.chat-form button{background:#667eea;color:white;padding:0 16px;border-radius:10px}
 .profile-card{background:white;border-radius:18px;padding:25px;max-width:600px}
 .profile-row{padding:13px 0;border-bottom:1px solid #edf0f5;overflow-wrap:anywhere}
 .profile-row span{color:#788398;display:block;font-size:13px;margin-bottom:4px}
 .timer-card{background:white;border-radius:20px;padding:40px;text-align:center;max-width:500px}
-.timer{font-size:65px;font-weight:800;margin:25px 0}
+.timer{font-size:clamp(30px,8vw,65px);font-weight:800;margin:25px 0}
+.timer-duration-form{margin-top:20px;text-align:left}
+.timer-duration-form label{display:block;font-size:14px;font-weight:700;margin-bottom:8px}
+.timer-duration-fields{display:flex;flex-wrap:wrap;gap:8px}
+.timer-duration-fields input{flex:1 1 90px;min-width:0;width:100%;padding:12px;border:1px solid #dce1eb;border-radius:10px}
+.timer-duration-fields button{flex:1 1 120px;padding:12px;border-radius:10px;background:#eef0ff;color:#5966d8;font-weight:700}
+.timer-duration-form p{font-size:12px;color:#738096;line-height:1.5;margin-top:8px}
+.timer-status{font-size:13px;line-height:1.5;color:#687386;margin-top:15px}
+.timer-status.error{background:transparent;padding:0;color:#b91c1c}
 .timer-buttons{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
 .timer-buttons button{padding:12px 20px;border-radius:10px;background:#667eea;color:white;font-weight:700}
 @media(max-width:800px){
 .sidebar{width:70px;padding:10px 7px}
+.source-code-link{justify-content:center;padding:13px 5px}.source-code-link span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
 .nav-btn{font-size:0;text-align:center;padding:13px 5px}
 .nav-btn::first-letter{font-size:20px}
 .main{padding:18px}
@@ -95,7 +104,6 @@ input,select{font-size:15px}
 .brand{font-size:20px}
 .user-mini{gap:6px}.user-mini #topName{max-width:75px;overflow:hidden;text-overflow:ellipsis}
 .person-card{align-items:flex-start;flex-direction:column}
-.chat-box{right:10px;bottom:10px;width:calc(100vw - 20px)}
 .task{align-items:flex-start;flex-direction:column}
 }
 </style>
@@ -167,8 +175,12 @@ input,select{font-size:15px}
 <button class="nav-btn" onclick="showPage('subjects',this)">📚 Subjects</button>
 <button class="nav-btn" onclick="showPage('tasks',this)">✅ Tasks</button>
 <button class="nav-btn" onclick="showPage('friends',this)">👥 Friends</button>
+<button class="nav-btn" data-page="chats" onclick="showPage('chats',this)"><span class="nav-icon" aria-hidden="true">&#9993;</span><span>Chats</span></button>
+<button class="nav-btn" data-page="notifications" onclick="showPage('notifications',this)"><span class="nav-icon" aria-hidden="true">&#9673;</span><span>Notifications</span><span id="notificationBadge" class="notification-badge hidden" aria-label="Unread notifications">0</span></button>
+<button class="nav-btn" data-page="notes" onclick="showPage('notes',this)"><span class="nav-icon" aria-hidden="true">&#9636;</span><span>Notes &amp; Posts</span></button>
 <button class="nav-btn" onclick="showPage('focus',this)">⏱️ Focus</button>
 <button class="nav-btn" onclick="showPage('profile',this)">👤 Profile</button>
+<a class="source-code-link" href="code.html" title="Copy complete website code"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m8 7-5 5 5 5m8-10 5 5-5 5m-3-12-2 18"/></svg><span>Copy Code</span></a>
 </aside>
 <main class="main">
 
@@ -200,7 +212,7 @@ input,select{font-size:15px}
 </section>
 
 <section id="friends" class="page">
-<h1 class="page-title">Friends</h1><p class="page-subtitle">Find classmates and chat with your friends.</p>
+<h1 class="page-title">Friends</h1><p class="page-subtitle">Find classmates. Open Chats to message friends and share study files.</p>
 <div class="friend-search"><div class="search-row">
 <input id="friendSearchInput" type="text" placeholder="Search by name, email or phone..." onkeydown="if(event.key==='Enter')searchStudents()">
 <button onclick="searchStudents()">Search</button>
@@ -210,10 +222,51 @@ input,select{font-size:15px}
 <div class="section"><h2>My Friends</h2><div id="friendsList" class="people"><div class="empty">You don't have any friends yet.</div></div></div>
 </section>
 
+<section id="chats" class="page">
+<div class="community-heading"><div><h1 class="page-title">Chats</h1><p class="page-subtitle">A space for your study conversations and shared files.</p></div><span class="community-label">FRIENDS ONLY</span></div>
+<div class="chat-workspace">
+<aside class="conversation-sidebar"><h2>Your friends</h2><div id="chatFriends"><div class="empty">Add classmates in Friends to start a conversation.</div></div></aside>
+<div class="conversation-panel">
+<div id="chatWelcome" class="conversation-welcome"><span class="welcome-mark" aria-hidden="true">&#9993;</span><h2>Keep the conversation going</h2><p>Select a friend to send a message, compare notes, or share a file.</p><button class="small-btn" onclick="showPage('friends')">Find friends</button></div>
+<div id="chatBox" class="conversation-content hidden">
+<div class="chat-header"><div><strong id="chatName">Chat</strong><small>Private conversation</small></div><button type="button" onclick="closeChat()" aria-label="Close conversation">&#10005;</button></div>
+<div id="messages" class="messages" aria-label="Conversation messages" aria-live="polite"></div>
+<div id="chatStatus" class="community-status" role="status"></div>
+<form id="chatForm" class="chat-composer" onsubmit="sendMessage(event)">
+<div id="selectedFile" class="selected-file hidden"><span id="selectedFileName"></span><button type="button" onclick="clearChatFile()" aria-label="Remove attachment">&#10005;</button></div>
+<div class="composer-row"><label class="attach-btn" for="chatFile" title="Attach a study file"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M8 13l7-7a3 3 0 014 4l-9 9a5 5 0 01-7-7l9-9"/></svg><span class="sr-only">Attach a file</span></label><input id="chatFile" class="sr-only" type="file" accept=".pdf,.txt,.md,.csv,.png,.jpg,.jpeg,.webp,.gif,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip" onchange="selectChatFile()"><input id="messageInput" type="text" maxlength="4000" placeholder="Write to your friend..." aria-label="Message" autocomplete="off"><button id="sendMessageBtn" type="submit">Send</button></div>
+<p class="file-hint">Documents, images, or ZIP files · up to 3 MB</p>
+</form>
+</div>
+</div>
+</div>
+</section>
+
+<section id="notifications" class="page">
+<div class="community-heading"><div><h1 class="page-title">Notifications</h1><p class="page-subtitle">New messages and files from your friends, in one place.</p></div><button id="markAllReadBtn" class="small-btn" onclick="markAllNotificationsRead()">Mark all as read</button></div>
+<div id="notificationStatus" class="community-status" role="status"></div>
+<div id="notificationsList" class="notification-list"><div class="empty">Loading notifications...</div></div>
+</section>
+
+<section id="notes" class="page">
+<div class="community-heading"><div><h1 class="page-title">Notes &amp; Posts</h1><p class="page-subtitle">Share what you know. Learn something from your classmates.</p></div><span class="community-label">COMMUNITY BOARD</span></div>
+<div class="notes-workspace">
+<form id="postForm" class="post-composer" onsubmit="publishPost(event)"><h2>Share with StudyHub</h2><p>Post study notes, a helpful tip, or a question. Every signed-in student can read and contribute.</p><label for="postTitle">Title</label><input id="postTitle" required maxlength="120" placeholder="What are you sharing?"><label for="postSubject">Subject</label><select id="postSubject"><option>General</option><option>Mathematics</option><option>English</option><option>Physics</option><option>Chemistry</option><option>Biology</option><option>Urdu</option><option>Islamiat</option><option>Computer</option><option>Sindhi</option><option>Pakistan Studies</option></select><label for="postContent">Your notes or post</label><textarea id="postContent" required maxlength="12000" rows="9" placeholder="Write your notes, explain an idea, or ask the community..."></textarea><p class="file-hint">Visible to all StudyHub students. Do not share private information.</p><div id="postStatus" class="community-status" role="status"></div><button id="publishPostBtn" class="primary-btn" type="submit">Publish post</button></form>
+<div class="notes-feed"><div class="feed-heading"><h2>From the community</h2><button class="secondary-btn" onclick="refreshPosts()">Refresh</button></div><div id="postsStatus" class="community-status" role="status"></div><div id="postsList" class="posts-list"><div class="empty">Loading community posts...</div></div></div>
+</div>
+</section>
+
 <section id="focus" class="page">
 <h1 class="page-title">Focus Timer</h1><p class="page-subtitle">Concentrate on your studies.</p>
-<div class="timer-card"><h2>Focus Session</h2><div id="timer" class="timer">25:00</div>
+<div class="timer-card"><h2>Focus Session</h2>
+<form class="timer-duration-form" onsubmit="setTimerDuration(event)" novalidate>
+<label for="timerMinutes">Session length (minutes)</label>
+<div class="timer-duration-fields"><input id="timerMinutes" type="number" min="1" max="1440" step="1" value="25" required aria-describedby="timerDurationHelp timerStatus"><button id="setTimerDurationBtn" type="submit">Set duration</button></div>
+<p id="timerDurationHelp">Choose 1–1440 minutes. Set duration restarts the countdown; pause first to change it.</p>
+</form>
+<div id="timer" class="timer" role="timer" aria-label="Time remaining">25:00</div>
 <div class="timer-buttons"><button onclick="startTimer()">Start</button><button onclick="pauseTimer()">Pause</button><button onclick="resetTimer()">Reset</button></div>
+<p id="timerStatus" class="timer-status" role="status" aria-live="polite"></p>
 </div></section>
 
 <section id="profile" class="page">
@@ -228,16 +281,8 @@ input,select{font-size:15px}
 </div>
 </div>
 
-<div id="chatBox" class="chat-box hidden">
-<div class="chat-header"><strong id="chatName">Chat</strong><button onclick="closeChat()">✕</button></div>
-<div id="messages" class="messages"></div>
-<form class="chat-form" onsubmit="sendMessage(event)">
-<input id="messageInput" type="text" placeholder="Type a message..." autocomplete="off">
-<button type="submit">Send</button>
-</form>
-</div>
-
 <script type="module">
+import { startCommunity, stopCommunity, updateChatFriends, openConversation, closeConversation, sendChatMessage, communityPageChanged } from "./community.js";
 import {initializeApp} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
 import {
  getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,
@@ -246,7 +291,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-auth.js";
 import {
  getFirestore,doc,setDoc,getDoc,collection,query,where,getDocs,
- updateDoc,deleteDoc,onSnapshot,serverTimestamp,orderBy,limit,addDoc
+ updateDoc,deleteDoc,onSnapshot,serverTimestamp,orderBy,limit
 } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
 const firebaseConfig={
@@ -263,11 +308,11 @@ const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getFirestore(app);
 
-let currentChatUid=null;
-let unsubscribeMessages=null;
 let unsubscribeRequests=null;
 let unsubscribeFriends=null;
-let timerSeconds=1500;
+let friendsListenerVersion=0;
+let timerDurationSeconds=25*60;
+let timerSeconds=timerDurationSeconds;
 let timerInterval=null;
 let timerRunning=false;
 let recaptchaVerifier=null;
@@ -447,6 +492,14 @@ onAuthStateChanged(auth,async user=>{
    loadSubjects();
    updateFocusCount();
    startFriendListeners();
+   startCommunity({
+    getUser:()=>auth.currentUser,
+    getToken:()=>auth.currentUser.getIdToken(),
+    legacyMessages:async friendUid=>{
+     const history=await getDocs(query(collection(db,"chats",createChatId(auth.currentUser.uid,friendUid),"messages"),orderBy("createdAt","desc"),limit(200)));
+     return history.docs.map(message=>({id:"legacy_"+message.id,...message.data(),createdAt:message.data().createdAt?.toDate?.()?.toISOString()||null})).reverse();
+    }
+   });
   }catch(e){
    console.error("App initialization error:",e);
    alert("StudyHub could not load some data: "+firebaseError(e));
@@ -455,7 +508,7 @@ onAuthStateChanged(auth,async user=>{
   el("authScreen").classList.remove("hidden");
   el("app").classList.add("hidden");
   stopFriendListeners();
-  closeChat();
+  stopCommunity();
  }
 });
 
@@ -467,7 +520,9 @@ window.showPage=(pageId,button)=>{
  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
  el(pageId)?.classList.add("active");
  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
- if(button)button.classList.add("active");
+ const selected=button||Array.from(document.querySelectorAll(".nav-btn")).find(item=>item.dataset.page===pageId||item.getAttribute("onclick")?.includes(`'${pageId}'`));
+ if(selected)selected.classList.add("active");
+ communityPageChanged(pageId);
 };
 
 async function loadProfile(){
@@ -575,9 +630,9 @@ window.sendFriendRequest=async toUid=>{
 
 function startFriendListeners(){if(!auth.currentUser)return;listenToRequests();listenToFriends()}
 function stopFriendListeners(){
+ friendsListenerVersion++;
  if(unsubscribeRequests){unsubscribeRequests();unsubscribeRequests=null}
  if(unsubscribeFriends){unsubscribeFriends();unsubscribeFriends=null}
- if(unsubscribeMessages){unsubscribeMessages();unsubscribeMessages=null}
 }
 
 function listenToRequests(){
@@ -628,13 +683,18 @@ function listenToFriends(){
  if(unsubscribeFriends)unsubscribeFriends();
  const q=query(collection(db,"friendships"),where("users","array-contains",user.uid));
  unsubscribeFriends=onSnapshot(q,async snap=>{
+  const version=++friendsListenerVersion;
+  if(auth.currentUser?.uid!==user.uid)return;
   const list=el("friendsList");el("friendCount").textContent=snap.size;
-  if(snap.empty){list.innerHTML='<div class="empty">You don\'t have any friends yet.</div>';return}
-  list.innerHTML="";
+  if(snap.empty){list.innerHTML='<div class="empty">You don\'t have any friends yet.</div>';updateChatFriends([]);return}
+  const cards=document.createDocumentFragment();
+  const chatFriends=[];
   for(const f of snap.docs){
    const d=f.data();const otherUid=(d.users||[]).find(uid=>uid!==user.uid);if(!otherUid)continue;
    try{
     const s=await getDoc(doc(db,"users",otherUid));const friend=s.exists()?s.data():{name:"Student"};
+    if(version!==friendsListenerVersion||auth.currentUser?.uid!==user.uid)return;
+    chatFriends.push({uid:otherUid,name:friend.name||"Student"});
     const card=document.createElement("div");card.className="person-card";
     const info=document.createElement("div");info.className="person-info";
     const avatar=document.createElement("div");avatar.className="avatar";avatar.textContent=(friend.name||"S").charAt(0).toUpperCase();
@@ -644,57 +704,25 @@ function listenToFriends(){
     details.append(name,contact);info.append(avatar,details);
     const actions=document.createElement("div");
     const chat=document.createElement("button");chat.className="small-btn chat-btn";chat.textContent="💬 Chat";chat.onclick=()=>openChat(otherUid);
-    actions.append(chat);card.append(info,actions);list.appendChild(card);
+    actions.append(chat);card.append(info,actions);cards.appendChild(card);
    }catch(e){console.error(e)}
   }
+  if(version!==friendsListenerVersion||auth.currentUser?.uid!==user.uid)return;
+  list.replaceChildren(cards);
+  updateChatFriends(chatFriends);
  },e=>{console.error("Friends listener:",e);el("friendsList").innerHTML=`<div class="error">${escapeHTML(firebaseError(e))}</div>`});
 }
 
 function createChatId(a,b){return [a,b].sort().join("_")}
 window.openChat=async friendUid=>{
- const user=auth.currentUser;if(!user)return;
- try{
-  const friendship=await getDoc(doc(db,"friendships",createFriendshipId(user.uid,friendUid)));
-  if(!friendship.exists()){alert("You must be friends before chatting.");return}
-  currentChatUid=friendUid;
-  const snap=await getDoc(doc(db,"users",friendUid));
-  el("chatName").textContent=snap.exists()?(snap.data().name||"Student"):"Student";
-  el("chatBox").classList.remove("hidden");
-  listenToChat(friendUid);
-  setTimeout(()=>el("messageInput").focus(),100);
- }catch(e){console.error(e);alert(firebaseError(e))}
+ showPage("chats");
+ await openConversation(friendUid);
 };
 window.closeChat=()=>{
- currentChatUid=null;
- if(unsubscribeMessages){unsubscribeMessages();unsubscribeMessages=null}
- el("chatBox").classList.add("hidden");
+ closeConversation();
 };
-function listenToChat(friendUid){
- const user=auth.currentUser;if(!user)return;
- if(unsubscribeMessages)unsubscribeMessages();
- const q=query(collection(db,"chats",createChatId(user.uid,friendUid),"messages"),orderBy("createdAt","asc"),limit(200));
- unsubscribeMessages=onSnapshot(q,snap=>{
-  const messages=el("messages");messages.innerHTML="";
-  snap.forEach(m=>{
-   const d=m.data();const div=document.createElement("div");
-   div.className="message "+(d.senderUid===user.uid?"mine":"theirs");
-   div.textContent=d.text||"";messages.appendChild(div);
-  });
-  messages.scrollTop=messages.scrollHeight;
- },e=>{console.error("Chat listener:",e);el("messages").innerHTML=`<div class="error">Unable to load chat: ${escapeHTML(firebaseError(e))}</div>`});
-}
 window.sendMessage=async event=>{
- event.preventDefault();
- const user=auth.currentUser,input=el("messageInput"),text=input.value.trim();
- if(!user||!currentChatUid||!text)return;
- try{
-  const f=await getDoc(doc(db,"friendships",createFriendshipId(user.uid,currentChatUid)));
-  if(!f.exists()){alert("You must be friends before chatting.");closeChat();return}
-  await addDoc(collection(db,"chats",createChatId(user.uid,currentChatUid),"messages"),{
-   senderUid:user.uid,receiverUid:currentChatUid,text,createdAt:serverTimestamp()
-  });
-  input.value="";
- }catch(e){console.error(e);alert(firebaseError(e))}
+ await sendChatMessage(event);
 };
 
 function updateTimer(){
@@ -702,6 +730,28 @@ function updateTimer(){
  const s=String(timerSeconds%60).padStart(2,"0");
  el("timer").textContent=`${m}:${s}`;
 }
+function updateTimerControls(){
+ el("timerMinutes").disabled=timerRunning;
+ el("setTimerDurationBtn").disabled=timerRunning;
+}
+function showTimerStatus(message,isError=false){
+ el("timerStatus").textContent=message;
+ el("timerStatus").classList.toggle("error",isError);
+ el("timerMinutes").setAttribute("aria-invalid",String(isError));
+}
+window.setTimerDuration=event=>{
+ event?.preventDefault();
+ if(timerRunning){showTimerStatus("Pause the timer before changing its duration.");return}
+ const minutes=Number(el("timerMinutes").value);
+ if(!Number.isInteger(minutes)||minutes<1||minutes>1440){
+  showTimerStatus("Enter a whole number between 1 and 1440 minutes.",true);return;
+ }
+ clearInterval(timerInterval);timerInterval=null;
+ timerDurationSeconds=minutes*60;timerSeconds=timerDurationSeconds;
+ el("timerMinutes").value=String(minutes);
+ updateTimer();updateTimerControls();
+ showTimerStatus(`Session set to ${minutes} ${minutes===1?"minute":"minutes"}. Press Start when ready.`);
+};
 function updateFocusCount(){
  if(!auth.currentUser)return;
  const seconds=Number(localStorage.getItem(`focus_${auth.currentUser.uid}`)||0);
@@ -709,13 +759,14 @@ function updateFocusCount(){
 }
 window.startTimer=()=>{
  if(timerRunning)return;
- if(timerSeconds<=0)timerSeconds=1500;
- timerRunning=true;
+ if(el("timerMinutes").value!==String(timerDurationSeconds/60)){
+  setTimerDuration();
+  if(el("timerMinutes").getAttribute("aria-invalid")==="true")return;
+ }
+ if(timerSeconds<=0)timerSeconds=timerDurationSeconds;
+ timerRunning=true;updateTimer();updateTimerControls();
+ showTimerStatus("Focus session in progress.");
  timerInterval=setInterval(()=>{
-  if(timerSeconds<=0){
-   clearInterval(timerInterval);timerRunning=false;
-   alert("Focus session complete! 🎉");return;
-  }
   timerSeconds--;updateTimer();
   if(auth.currentUser){
    const key=`focus_${auth.currentUser.uid}`;
@@ -723,13 +774,21 @@ window.startTimer=()=>{
    localStorage.setItem(key,String(used));
    if(used%60===0)updateFocusCount();
   }
+  if(timerSeconds<=0){
+   clearInterval(timerInterval);timerInterval=null;timerRunning=false;
+   updateTimerControls();showTimerStatus("Focus session complete.");
+   alert("Focus session complete! 🎉");
+  }
  },1000);
 };
 window.pauseTimer=()=>{
- clearInterval(timerInterval);timerRunning=false;updateFocusCount();
+ clearInterval(timerInterval);timerInterval=null;timerRunning=false;updateFocusCount();updateTimerControls();
+ showTimerStatus("Paused. Press Start to continue, or set a new duration.");
 };
 window.resetTimer=()=>{
- clearInterval(timerInterval);timerRunning=false;timerSeconds=1500;updateTimer();
+ clearInterval(timerInterval);timerInterval=null;timerRunning=false;timerSeconds=timerDurationSeconds;
+ el("timerMinutes").value=String(timerDurationSeconds/60);
+ updateTimer();updateTimerControls();showTimerStatus("Timer reset to your selected session length.");
 };
 updateTimer();
 </script>
